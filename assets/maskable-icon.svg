@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title">
+  <title>Winner Card maskable icon</title>
+  <rect width="512" height="512" fill="#061f4b"/>
+  <circle cx="256" cy="256" r="214" fill="#123f94"/>
+  <rect x="136" y="116" width="240" height="300" rx="44" fill="#ffb21a" stroke="#fff4b8" stroke-width="14"/>
+  <path d="M256 166l28 57 63 9-45 44 11 62-57-30-57 30 11-62-45-44 63-9 28-57z" fill="#fff6d9"/>
+  <path d="M184 358h144" stroke="#ffffff" stroke-width="20" stroke-linecap="round"/>
+</svg>
