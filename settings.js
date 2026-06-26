@@ -1,3 +1,4 @@
+(() => {
 const FIELD_SIZES = [4, 6, 8, 10];
 const MAX_PLAYERS = 6;
 const MIN_PLAYERS = 1;
@@ -19,13 +20,13 @@ async function loadSettings() {
 
   if (!saved) {
     const legacySettings = readLegacySettings();
-    return legacySettings ? normalizeSettings(legacySettings) : structuredClone(defaultSettings);
+    return legacySettings ? normalizeSettings(legacySettings) : cloneValue(defaultSettings);
   }
 
   try {
     return normalizeSettings(saved);
-  } catch {
-    return structuredClone(defaultSettings);
+  } catch (error) {
+    return cloneValue(defaultSettings);
   }
 }
 
@@ -81,9 +82,13 @@ function readLegacySettings() {
   try {
     const saved = localStorage.getItem(STORAGE_KEY);
     return saved ? JSON.parse(saved) : null;
-  } catch {
+  } catch (error) {
     return null;
   }
+}
+
+function cloneValue(value) {
+  return JSON.parse(JSON.stringify(value));
 }
 
 window.WinnerSettings = {
@@ -97,5 +102,7 @@ window.WinnerSettings = {
   loadSavedGame,
   saveGameState,
   clearSavedGame,
-  normalizeSettings
+  normalizeSettings,
+  cloneValue
 };
+})();

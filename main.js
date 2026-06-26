@@ -1,3 +1,10 @@
+(() => {
+if (window.WinnerAppStarted) {
+  return;
+}
+
+window.WinnerAppStarted = true;
+
 const { CARD_SETS } = window.WinnerCards;
 const { closeMismatchedCards, createGameState, flipCard, getWinners, hydrateGameState, tick } = window.WinnerGame;
 const {
@@ -10,10 +17,11 @@ const {
   loadSavedGame,
   loadSettings,
   saveGameState,
-  saveSettings
+  saveSettings,
+  cloneValue
 } = window.WinnerSettings;
 
-let settings = structuredClone(defaultSettings);
+let settings = cloneValue(defaultSettings);
 let gameState = null;
 let timerId = null;
 let mismatchTimeout = null;
@@ -47,8 +55,6 @@ const elements = {
 init();
 
 async function init() {
-  settings = await loadSettings();
-  savedGameSnapshot = await loadSavedGame();
   renderSettings();
   bindNavigation();
   bindSettings();
@@ -58,6 +64,16 @@ async function init() {
   updateContinueButton();
   registerServiceWorker();
   showScreen('mainMenu');
+
+  try {
+    settings = await loadSettings();
+    savedGameSnapshot = await loadSavedGame();
+    renderSettings();
+    updateContinueButton();
+  } catch (error) {
+    renderSettings();
+    updateContinueButton();
+  }
 }
 
 function bindNavigation() {
@@ -374,12 +390,26 @@ function updateContinueButton() {
 function registerServiceWorker() {
   if (!('serviceWorker' in navigator)) return;
 
+  if (isLocalDevelopment()) {
+    navigator.serviceWorker.getRegistrations()
+      .then((registrations) => {
+        registrations.forEach((registration) => registration.unregister());
+      })
+      .catch(() => {});
+    return;
+  }
+
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('./sw.js').catch(() => {
       // PWA mode is optional; the game still works without a service worker.
     });
   });
 }
+
+function isLocalDevelopment() {
+  return ['localhost', '127.0.0.1', '0.0.0.0'].includes(window.location.hostname);
+}
+})();
 
 function formatTime(seconds) {
   const minutes = Math.floor(seconds / 60);
@@ -393,9 +423,9 @@ function getMinuteWord(minutes) {
 
 function escapeHtml(value) {
   return String(value)
-    .replaceAll('&', '&amp;')
-    .replaceAll('<', '&lt;')
-    .replaceAll('>', '&gt;')
-    .replaceAll('"', '&quot;')
-    .replaceAll("'", '&#039;');
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
 }

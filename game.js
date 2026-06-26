@@ -1,4 +1,6 @@
+(() => {
 const { createCards } = window.WinnerCards;
+const { cloneValue } = window.WinnerSettings;
 
 function createGameState(settings) {
   return {
@@ -9,7 +11,7 @@ function createGameState(settings) {
     currentPlayerIndex: 0,
     scores: settings.players.map(() => 0),
     timeLeft: settings.timerEnabled ? settings.timeLimitMinutes * 60 : null,
-    settings: structuredClone(settings),
+    settings: cloneValue(settings),
     isLocked: false,
     isFinished: false
   };
@@ -116,3 +118,4 @@ window.WinnerGame = {
   tick,
   getWinners
 };
+})();

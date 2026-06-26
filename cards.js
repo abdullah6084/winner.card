@@ -1,3 +1,4 @@
+(() => {
 const CARD_SETS = {
   animals: {
     title: 'Животные',
@@ -61,3 +62,4 @@ window.WinnerCards = {
   CARD_SETS,
   createCards
 };
+})();

@@ -1,4 +1,4 @@
-const CACHE_NAME = 'winner-card-v1';
+const CACHE_NAME = 'winner-card-v4';
 const APP_SHELL = [
   './',
   './index.html',
@@ -39,23 +39,22 @@ self.addEventListener('fetch', (event) => {
   if (event.request.method !== 'GET') return;
 
   event.respondWith(
-    caches.match(event.request)
-      .then((cachedResponse) => {
-        if (cachedResponse) return cachedResponse;
+    fetch(event.request)
+      .then((networkResponse) => {
+        const responseCopy = networkResponse.clone();
+        caches.open(CACHE_NAME).then((cache) => cache.put(event.request, responseCopy));
+        return networkResponse;
+      })
+      .catch(() => {
+        return caches.match(event.request).then((cachedResponse) => {
+          if (cachedResponse) return cachedResponse;
 
-        return fetch(event.request)
-          .then((networkResponse) => {
-            const responseCopy = networkResponse.clone();
-            caches.open(CACHE_NAME).then((cache) => cache.put(event.request, responseCopy));
-            return networkResponse;
-          })
-          .catch(() => {
-            if (event.request.mode === 'navigate') {
-              return caches.match('./index.html');
-            }
+          if (event.request.mode === 'navigate') {
+            return caches.match('./index.html');
+          }
 
-            return Response.error();
-          });
+          return Response.error();
+        });
       })
   );
 });

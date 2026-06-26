@@ -12,6 +12,23 @@
   <link rel="icon" href="assets/icon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="assets/icon-192.png">
   <link rel="stylesheet" href="style.css">
+  <script>
+    window.addEventListener('error', function (event) {
+      window.showWinnerCardError(event.message || 'Ошибка JavaScript');
+    });
+
+    window.addEventListener('unhandledrejection', function (event) {
+      var reason = event.reason && event.reason.message ? event.reason.message : String(event.reason);
+      window.showWinnerCardError(reason || 'Ошибка запуска');
+    });
+
+    window.showWinnerCardError = function (message) {
+      var box = document.getElementById('debugError');
+      if (!box) return;
+      box.hidden = false;
+      box.textContent = 'Ошибка: ' + message;
+    };
+  </script>
 </head>
 <body>
   <main class="phone-shell">
@@ -119,12 +136,14 @@
         <button class="primary-button red" id="resultExitButton">В меню</button>
       </div>
     </div>
+
+    <div class="debug-error" id="debugError" hidden></div>
   </main>
 
-  <script src="cards.js"></script>
-  <script src="db.js"></script>
-  <script src="settings.js"></script>
-  <script src="game.js"></script>
-  <script src="main.js"></script>
+  <script src="cards.js?v=4"></script>
+  <script src="db.js?v=4"></script>
+  <script src="settings.js?v=4"></script>
+  <script src="game.js?v=4"></script>
+  <script src="main.js?v=4"></script>
 </body>
 </html>

@@ -1,3 +1,4 @@
+(() => {
 const DB_NAME = 'winner-card-db';
 const DB_VERSION = 1;
 const STORE_NAME = 'game-data';
@@ -32,11 +33,13 @@ async function readValue(key, fallback = null) {
       const store = transaction.objectStore(STORE_NAME);
       const request = store.get(key);
 
-      request.onsuccess = () => resolve(request.result ?? fallback);
+      request.onsuccess = () => {
+        resolve(request.result === undefined ? fallback : request.result);
+      };
       request.onerror = () => reject(request.error);
       transaction.oncomplete = () => db.close();
     });
-  } catch {
+  } catch (error) {
     return fallback;
   }
 }
@@ -58,7 +61,7 @@ async function writeValue(key, value) {
     });
 
     return true;
-  } catch {
+  } catch (error) {
     return false;
   }
 }
@@ -80,7 +83,7 @@ async function deleteValue(key) {
     });
 
     return true;
-  } catch {
+  } catch (error) {
     return false;
   }
 }
@@ -90,3 +93,4 @@ window.WinnerDB = {
   writeValue,
   deleteValue
 };
+})();
